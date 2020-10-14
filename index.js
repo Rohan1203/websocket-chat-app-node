@@ -1,18 +1,25 @@
 var express = require('express');
-var socket  = require('socket.io');
+var socket = require('socket.io');
 
+// App setup
 var app = express();
 
-var server = app.listen(3000, function(){
-  console.log("Listening on port 3000");
+var server = app.listen(4000, function(){
+    console.log('listening for requests on port 4000');
 });
 
-//static files
-app.use(express.static("public"));
+// Static files
+app.use(express.static('public'));
 
-//socket settle
+// Socket setup & pass server
 var io = socket(server);
+io.on('connection', (socket) => {
+    console.log('made socket connection', socket.id);
 
-io.on("connection", function(socket){
-  console.log("made socket connection");
+    // Handle chat event
+    socket.on('chat', function(data){
+        console.log(data);
+        io.sockets.emit('chat-f', data);
+    });
+
 });
